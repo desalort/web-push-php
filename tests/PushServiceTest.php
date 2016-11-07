@@ -20,8 +20,8 @@ class PushServiceTest extends PHPUnit_Framework_TestCase
     private static $gcmApiKey = 'AIzaSyBAU0VfXoskxUSg81K5VgLgwblHbZWe6tA';
     private static $vapidKeys = array(
         'subject' => 'http://test.com',
-        'publicKey' => 'BA6jvk34k6YjElHQ6S0oZwmrsqHdCNajxcod6KJnI77Dagikfb--O_kYXcR2eflRz6l3PcI2r8fPCH3BElLQHDk',
-        'privateKey' => '-3CdhFOqjzixgAbUSa0Zv9zi-dwDVmWO7672aBxSFPQ',
+        'publicKey' => 'BF326dtFn8oRwhpL4hoZciv8jdInuXUrL79qGqlYGkz7Fk4jo3iSdglnC9t-DsZM8EDrFeAX8rebK3uN63FUCfE',
+        'privateKey' => 'nx9zGwu-qjfAJeWY-toozP_QC2ntjKkVt9JOjcDNMPw',
     );
 
     /** @var WebPush WebPush with correct api keys */
@@ -33,14 +33,14 @@ class PushServiceTest extends PHPUnit_Framework_TestCase
      * detect current OS, we can probably run this automatically
      * for Linux and OS X at a later date.
      */
-    protected function checkRequirements()
-    {
-        parent::checkRequirements();
+    //protected function checkRequirements()
+    //{
+    //    parent::checkRequirements();
 
-        if (!(getenv('TRAVIS') || getenv('CI'))) {
-            $this->markTestSkipped('This test does not run on Travis.');
-        }
-    }
+        //if (!(getenv('TRAVIS') || getenv('CI'))) {
+            //$this->markTestSkipped('This test does not run on Travis.');
+        //}
+    //}
 
     public static function setUpBeforeClass()
     {
@@ -77,33 +77,33 @@ class PushServiceTest extends PHPUnit_Framework_TestCase
     {
         return array(
             // Web Push
-            array('chrome', 'stable', array()),
-            array('chrome', 'beta', array()),
-            array('chrome', 'unstable', array()),
-            array('firefox', 'stable', array()),
-            array('firefox', 'beta', array()),
-            array('firefox', 'unstable', array()),
+            //array('chrome', 'stable', array()),
+            //array('chrome', 'beta', array()),
+            //array('chrome', 'unstable', array()),
+            //array('firefox', 'stable', array()),
+            //array('firefox', 'beta', array()),
+            //array('firefox', 'unstable', array()),
             // Web Push + GCM
-            array('chrome', 'stable', array('GCM' => self::$gcmApiKey)),
-            array('chrome', 'beta', array('GCM' => self::$gcmApiKey)),
-            array('chrome', 'unstable', array('GCM' => self::$gcmApiKey)),
-            array('firefox', 'stable', array('GCM' => self::$gcmApiKey)),
-            array('firefox', 'beta', array('GCM' => self::$gcmApiKey)),
-            array('firefox', 'unstable', array('GCM' => self::$gcmApiKey)),
+            //array('chrome', 'stable', array('GCM' => self::$gcmApiKey)),
+            //array('chrome', 'beta', array('GCM' => self::$gcmApiKey)),
+            //array('chrome', 'unstable', array('GCM' => self::$gcmApiKey)),
+            //array('firefox', 'stable', array('GCM' => self::$gcmApiKey)),
+            //array('firefox', 'beta', array('GCM' => self::$gcmApiKey)),
+            //array('firefox', 'unstable', array('GCM' => self::$gcmApiKey)),
             // Web Push + VAPID
             array('chrome', 'stable', array('VAPID' => self::$vapidKeys)),
-            array('chrome', 'beta', array('VAPID' => self::$vapidKeys)),
-            array('chrome', 'unstable', array('VAPID' => self::$vapidKeys)),
-            array('firefox', 'stable', array('VAPID' => self::$vapidKeys)),
-            array('firefox', 'beta', array('VAPID' => self::$vapidKeys)),
-            array('firefox', 'unstable', array('VAPID' => self::$vapidKeys)),
+            //array('chrome', 'beta', array('VAPID' => self::$vapidKeys)),
+            //array('chrome', 'unstable', array('VAPID' => self::$vapidKeys)),
+            //array('firefox', 'stable', array('VAPID' => self::$vapidKeys)),
+            //array('firefox', 'beta', array('VAPID' => self::$vapidKeys)),
+            //array('firefox', 'unstable', array('VAPID' => self::$vapidKeys)),
             // Web Push + GCM + VAPID
-            array('chrome', 'stable', array('GCM' => self::$gcmApiKey, 'VAPID' => self::$vapidKeys)),
-            array('chrome', 'beta', array('GCM' => self::$gcmApiKey, 'VAPID' => self::$vapidKeys)),
-            array('chrome', 'unstable', array('GCM' => self::$gcmApiKey, 'VAPID' => self::$vapidKeys)),
-            array('firefox', 'stable', array('GCM' => self::$gcmApiKey, 'VAPID' => self::$vapidKeys)),
-            array('firefox', 'beta', array('GCM' => self::$gcmApiKey, 'VAPID' => self::$vapidKeys)),
-            array('firefox', 'unstable', array('GCM' => self::$gcmApiKey, 'VAPID' => self::$vapidKeys)),
+            //array('chrome', 'stable', array('GCM' => self::$gcmApiKey, 'VAPID' => self::$vapidKeys)),
+            //array('chrome', 'beta', array('GCM' => self::$gcmApiKey, 'VAPID' => self::$vapidKeys)),
+            //array('chrome', 'unstable', array('GCM' => self::$gcmApiKey, 'VAPID' => self::$vapidKeys)),
+            //array('firefox', 'stable', array('GCM' => self::$gcmApiKey, 'VAPID' => self::$vapidKeys)),
+            //array('firefox', 'beta', array('GCM' => self::$gcmApiKey, 'VAPID' => self::$vapidKeys)),
+            //array('firefox', 'unstable', array('GCM' => self::$gcmApiKey, 'VAPID' => self::$vapidKeys)),
         );
     }
 
@@ -113,6 +113,9 @@ class PushServiceTest extends PHPUnit_Framework_TestCase
      */
     public function testBrowsers($browserId, $browserVersion, $options)
     {
+        echo "\n\n";
+        var_dump($options);
+        echo "\n\n";
         $this->webPush = new WebPush($options);
         $this->webPush->setAutomaticPadding(false);
 
@@ -148,6 +151,10 @@ class PushServiceTest extends PHPUnit_Framework_TestCase
 
         // Close request to clear up some resources
         curl_close($getSubscriptionCurl);
+
+        echo "\n\n";
+        echo $resp."\n";
+        echo "\n\n";
 
         $parsedResp = json_decode($resp);
 

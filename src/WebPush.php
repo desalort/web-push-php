@@ -229,7 +229,13 @@ class WebPush
                     throw new \ErrorException('Audience "'.$audience.'"" could not be generated.');
                 }
 
+                echo "Audience: ".$audience."\n";
+                echo "Subject: ".$vapid['subject']."\n\n";
+
                 $vapidHeaders = VAPID::getVapidHeaders($audience, $vapid['subject'], $vapid['publicKey'], $vapid['privateKey']);
+
+                var_dump($vapidHeaders);
+                echo "\n\n";
 
                 $headers['Authorization'] = $vapidHeaders['Authorization'];
 

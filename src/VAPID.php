@@ -90,6 +90,9 @@ class VAPID
             'sub' => $subject,
         ), JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
 
+        var_dump($jwtPayload);
+        echo "\n\n";
+
         $generator = EccFactory::getNistCurves()->generator256();
         $privateKeyObject = $generator->getPrivateKeyFrom(gmp_init(bin2hex($privateKey), 16));
         $pemSerialize = new PemPrivateKeySerializer(new DerPrivateKeySerializer());

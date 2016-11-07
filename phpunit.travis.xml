@@ -11,7 +11,11 @@
          syntaxCheck="false">
     <testsuites>
         <testsuite name="WebPush Test Suite">
-            <directory suffix=".php">./tests/</directory>
+            <directory suffix="VAPIDTest.php">./tests/</directory>
         </testsuite>
     </testsuites>
+    <php>
+        <env name="VAPID_PUBLIC_KEY" value="BF326dtFn8oRwhpL4hoZciv8jdInuXUrL79qGqlYGkz7Fk4jo3iSdglnC9t-DsZM8EDrFeAX8rebK3uN63FUCfE" />
+        <env name="VAPID_PRIVATE_KEY" value="nx9zGwu-qjfAJeWY-toozP_QC2ntjKkVt9JOjcDNMPw" />
+    </php>
 </phpunit>

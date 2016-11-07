@@ -24,7 +24,7 @@
         <env name="GCM_USER_AUTH_TOKEN" value="" />
         <env name="GCM_API_KEY" value="" />
 
-        <env name="VAPID_PUBLIC_KEY" value="" />
-        <env name="VAPID_PRIVATE_KEY" value="" />
+        <env name="VAPID_PUBLIC_KEY" value="BF326dtFn8oRwhpL4hoZciv8jdInuXUrL79qGqlYGkz7Fk4jo3iSdglnC9t-DsZM8EDrFeAX8rebK3uN63FUCfE" />
+        <env name="VAPID_PRIVATE_KEY" value="nx9zGwu-qjfAJeWY-toozP_QC2ntjKkVt9JOjcDNMPw" />
     </php>
 </phpunit>

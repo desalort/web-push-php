@@ -14,48 +14,117 @@ use Minishlink\WebPush\VAPID;
 
 class VAPIDTest extends PHPUnit_Framework_TestCase
 {
-    public function vapidProvider()
+    public $validAudience = 'https://example.com';
+    public $validSubjectMailTo = 'mailto: example@example.com';
+    public $validSubjectUrl = 'https://exampe.com/contact';
+    public $validPublicKey = 'BF326dtFn8oRwhpL4hoZciv8jdInuXUrL79qGqlYGkz7Fk4jo3iSdglnC9t-DsZM8EDrFeAX8rebK3uN63FUCfE';
+    public $validPrivateKey = 'nx9zGwu-qjfAJeWY-toozP_QC2ntjKkVt9JOjcDNMPw';
+    public $validExpiration = 1478575110;
+
+    public $expectedJWTHeader = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9';
+    public $expectedJWTPayload = 'eyJhdWQiOiJodHRwczovL2V4YW1wbGUuY29tIiwiZXhwIjoxNDc4NTc1MTEwLCJzdWIiOiJodHRwczovL2V4YW1wZS5jb20vY29udGFjdCJ9';
+
+    public function vapidNoExpirationProvider()
     {
         return array(
             array(
-                'http://push.com',
-                array(
-                    'subject' => 'http://test.com',
-                    'publicKey' => 'BA6jvk34k6YjElHQ6S0oZwmrsqHdCNajxcod6KJnI77Dagikfb--O_kYXcR2eflRz6l3PcI2r8fPCH3BElLQHDk',
-                    'privateKey' => '-3CdhFOqjzixgAbUSa0Zv9zi-dwDVmWO7672aBxSFPQ',
-                ),
-                '1475452165',
-                'WebPush eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJhdWQiOiJodHRwOi8vcHVzaC5jb20iLCJleHAiOjE0NzU0NTIxNjUsInN1YiI6Imh0dHA6Ly90ZXN0LmNvbSJ9.4F3ZKjeru4P9XM20rHPNvGBcr9zxhz8_ViyNfe11_xcuy7A9y7KfEPt6yuNikyW7eT9zYYD5mQZubDGa-5H2cA',
-                'p256ecdsa=BA6jvk34k6YjElHQ6S0oZwmrsqHdCNajxcod6KJnI77Dagikfb--O_kYXcR2eflRz6l3PcI2r8fPCH3BElLQHDk',
+                $this->validAudience,
+                $this->validSubjectMailTo,
+                $this->validPublicKey,
+                $this->validPrivateKey,
+                $this->expectedJWTHeader
             ),
+            array(
+                $this->validAudience,
+                $this->validSubjectUrl,
+                $this->validPublicKey,
+                $this->validPrivateKey,
+                $this->expectedJWTHeader
+            )
         );
+
+        /**
+         * array(
+         *    array(
+         *     'subject' => 'http://test.com',
+         *     'publicKey' => 'BA6jvk34k6YjElHQ6S0oZwmrsqHdCNajxcod6KJnI77Dagikfb--O_kYXcR2eflRz6l3PcI2r8fPCH3BElLQHDk',
+         *     'privateKey' => '-3CdhFOqjzixgAbUSa0Zv9zi-dwDVmWO7672aBxSFPQ',
+         * ),
+         * '1475452165',
+         * 'WebPush eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJhdWQiOiJodHRwOi8vcHVzaC5jb20iLCJleHAiOjE0NzU0NTIxNjUsInN1YiI6Imh0dHA6Ly90ZXN0LmNvbSJ9.4F3ZKjeru4P9XM20rHPNvGBcr9zxhz8_ViyNfe11_xcuy7A9y7KfEPt6yuNikyW7eT9zYYD5mQZubDGa-5H2cA',
+         * 'p256ecdsa=BA6jvk34k6YjElHQ6S0oZwmrsqHdCNajxcod6KJnI77Dagikfb--O_kYXcR2eflRz6l3PcI2r8fPCH3BElLQHDk',
+         * )
+         */
+    }
+
+    public function vapidExpirationProvider()
+    {
+      return array(
+          array(
+              $this->validAudience,
+              $this->validSubjectMailTo,
+              $this->validPublicKey,
+              $this->validPrivateKey,
+              $this->validExpiration,
+              $this->expectedJWTHeader,
+              $this->expectedJWTPayload
+          ),
+      );
     }
 
     /**
-     * @dataProvider vapidProvider
+     * @dataProvider vapidNoExpirationProvider
      *
      * @param $audience
-     * @param $vapid
-     * @param $expiration
-     * @param $expectedAuthorization
-     * @param $expectedCryptoKey
+     * @param $subject
+     * @param $publicKey
+     * @param $privateKey
+     * @param $expectedJWTHeader
      */
-    public function testGetVapidHeaders($audience, $vapid, $expiration, $expectedAuthorization, $expectedCryptoKey)
+    public function testGetVapidHeaders($audience, $subject, $publicKey, $privateKey, $expectedJWTHeader)
     {
-        $vapid = VAPID::validate($vapid);
-        $headers = VAPID::getVapidHeaders($audience, $vapid['subject'], $vapid['publicKey'], $vapid['privateKey'], $expiration);
+        $vapid = VAPID::validate(array(
+          'subject' => $subject,
+          'publicKey' => $publicKey,
+          'privateKey' => $privateKey
+        ));
+        $headers = VAPID::getVapidHeaders($audience, $vapid['subject'], $vapid['publicKey'], $vapid['privateKey']);
 
         $this->assertArrayHasKey('Authorization', $headers);
-        $this->assertEquals(Utils::safeStrlen($expectedAuthorization), Utils::safeStrlen($headers['Authorization']));
-        $this->assertEquals($this->explodeAuthorization($expectedAuthorization), $this->explodeAuthorization($headers['Authorization']));
         $this->assertArrayHasKey('Crypto-Key', $headers);
-        $this->assertEquals($expectedCryptoKey, $headers['Crypto-Key']);
+
+        $this->assertEquals('p256ecdsa='.$publicKey, $headers['Crypto-Key']);
+
+        $authParts = explode('.', $headers['Authorization']);
+        $this->assertEquals('WebPush '.$expectedJWTHeader, $authParts[0]);
     }
 
-    private function explodeAuthorization($auth)
+    /**
+     * @dataProvider vapidExpirationProvider
+     * @param  [type] $audience           [description]
+     * @param  [type] $subject            [description]
+     * @param  [type] $publicKey          [description]
+     * @param  [type] $privateKey         [description]
+     * @param  [type] $expiration         [description]
+     * @param  [type] $expectedJWTHeader  [description]
+     * @param  [type] $expectedJWTPayload [description]
+     */
+    public function testGetVapidHeadersWithExpiration($audience, $subject, $publicKey, $privateKey, $expiration, $expectedJWTHeader, $expectedJWTPayload)
     {
-        $auth = explode('.', $auth);
-        array_pop($auth); // delete the signature which changes each time
-        return $auth;
+      $vapid = VAPID::validate(array(
+        'subject' => $subject,
+        'publicKey' => $publicKey,
+        'privateKey' => $privateKey
+      ));
+      $headers = VAPID::getVapidHeaders($audience, $vapid['subject'], $vapid['publicKey'], $vapid['privateKey'], $expiration);
+
+      $this->assertArrayHasKey('Authorization', $headers);
+      $this->assertArrayHasKey('Crypto-Key', $headers);
+
+      $this->assertEquals('p256ecdsa='.$publicKey, $headers['Crypto-Key']);
+
+      $authParts = explode('.', $headers['Authorization']);
+      $this->assertEquals('WebPush '.$expectedJWTHeader, $authParts[0]);
+      $this->assertEquals($expectedJWTPayload, $authParts[1]);
     }
 }
